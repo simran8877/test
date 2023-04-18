@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    name: Fetch, Upload, and Push Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with: 
+          token: ${{ secrets.GITHUB }}
+      - name: Add File to Repository
+        run: |
+          curl -o epg.xml.gz ${{ secrets.EPG_URL }}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add epg.xml.gz
+          git commit -m "Update EPG"
+          git push origin HEAD:${{ github.ref }}
